@@ -3,6 +3,7 @@ package com.smilepay.user_service.services;
 import com.smilepay.user_service.dto.RequestDto.LoginRequest;
 import com.smilepay.user_service.dto.RequestDto.TransferRequest;
 import com.smilepay.user_service.dto.RequestDto.UserRequest;
+import com.smilepay.user_service.dto.ResponseDto.BalanceResponse;
 import com.smilepay.user_service.dto.ResponseDto.TransferResponse;
 import com.smilepay.user_service.dto.ResponseDto.UserResponse;
 import com.smilepay.user_service.enums.UserStatus;
@@ -166,4 +167,35 @@ public class UserService {
         walletRepository.save(wallet);
         return userMapper.toResponse(wallet.getUser(), wallet);
     }
+
+    public BalanceResponse getBalance(String phoneNumber, String pin){
+
+         //verify pin
+        User user= repository.findByPhoneNumber(phoneNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found with this phone number"+ phoneNumber));
+
+        String[] parts = user.getPinHash().split(":");
+        String salt = parts[0];
+        String storedHash = parts[1];
+        if(!pinUtil.verifyPin(pin, storedHash, salt)){
+            throw new IllegalArgumentException("Invalid PIN");
+        }
+
+
+         Wallet existingWallet = walletRepository.findByUserPhoneNumber(phoneNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with this phone number not found"+ phoneNumber));
+
+
+        return BalanceResponse.builder()
+                .id(existingWallet.getId())
+                .phoneNumber(phoneNumber)
+                .balance(existingWallet.getBalance())
+                .fullName(existingWallet.getUser().getFullName())
+                .walletNumber(existingWallet.getWalletNumber())
+                .dailyLimit(existingWallet.getDailyLimit())
+                .balance(existingWallet.getBalance())
+                .dailyUsed(existingWallet.getDailyUsed())
+                .build();
+    }
+
 }
