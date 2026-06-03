@@ -1,14 +1,14 @@
 # Base image
-FROM eclipse-temurin:21-jdk-ubi9-minimal
+FROM maven:3.9-eclipse-temurin-21 AS build
 
 # Set the working directory
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copy the application JAR file to the container
-COPY target/user-service-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose the port the application runs on
-EXPOSE 8194
-
-# Command to run the application
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8190
 ENTRYPOINT ["java", "-jar", "app.jar"]
