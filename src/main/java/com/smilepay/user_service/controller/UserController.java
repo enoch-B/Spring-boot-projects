@@ -3,6 +3,7 @@ package com.smilepay.user_service.controller;
 import com.smilepay.user_service.dto.RequestDto.LoginRequest;
 import com.smilepay.user_service.dto.RequestDto.TransferRequest;
 import com.smilepay.user_service.dto.RequestDto.UserRequest;
+import com.smilepay.user_service.dto.ResponseDto.BalanceResponse;
 import com.smilepay.user_service.dto.ResponseDto.TransferResponse;
 import com.smilepay.user_service.dto.ResponseDto.UserResponse;
 import com.smilepay.user_service.services.UserService;
@@ -59,5 +60,10 @@ public class UserController {
      @PutMapping("{phoneNumber}/debit")
     public ResponseEntity<UserResponse> debitWallet(@PathVariable String phoneNumber, @RequestParam BigDecimal amount){
          return ResponseEntity.ok(userService.debitWallet(phoneNumber, amount));
+     }
+
+     @GetMapping("/{pin}/{phone}/balance")
+    public ResponseEntity<BalanceResponse> getBalance(@PathVariable String phone, @PathVariable String pin){
+         return ResponseEntity.ok(userService.getBalance(phone, pin));
      }
 }
