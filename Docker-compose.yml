@@ -1,21 +1,6 @@
 version: '3.8'
 
 services:
-  user-service:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: user-service
-    ports:
-      - "8194:8194"
-    environment:
-      - SPRING_PROFILES_ACTIVE=default
-      - DB_URL=jdbc:mysql://mysql:3306/user_db?createDatabaseIfNotExist=true
-      - DB_USERNAME=root
-      - DB_PASSWORD=password
-    depends_on:
-      - mysql
-
   mysql:
     image: mysql:8.0
     container_name: smile_mysql
@@ -24,7 +9,7 @@ services:
       MYSQL_DATABASE: user_db
       MYSQL_ROOT_PASSWORD: password
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 
