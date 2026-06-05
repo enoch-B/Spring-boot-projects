@@ -9,6 +9,7 @@ import com.smilepay.user_service.dto.ResponseDto.UserResponse;
 import com.smilepay.user_service.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,11 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
+@Slf4j
 public class UserController {
      private final UserService userService;
+
+     Long start=System.currentTimeMillis();
 
      @PostMapping("/register")
     public ResponseEntity<UserResponse> registerUser(@RequestBody UserRequest request){
@@ -44,7 +48,9 @@ public class UserController {
      }
     @GetMapping("/get-all")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+
+         log.info("Time taken to fetch all users: {} ms", System.currentTimeMillis() - start);
+         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @PostMapping("/transfer")
