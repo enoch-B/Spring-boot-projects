@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   mysql:
@@ -13,5 +12,21 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:9.5.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
 volumes:
   mysql_data:
